@@ -10,5 +10,8 @@ namespace Skills
         private int _cost;
         private string _name;
         private bool _isBase;
+
+        public SkillType SkillType => _skillType;
+        public SkillType[] Neighbors => _neighbors;
     }
 }
