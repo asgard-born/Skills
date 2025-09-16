@@ -6,23 +6,21 @@ using UnityEngine.UI;
 
 namespace Skills
 {
-    [RequireComponent(typeof(CanvasGroup), typeof(Button), typeof(Image))]
+    [RequireComponent(typeof(Button), typeof(Image))]
     public class SkillView : MonoBehaviour
     {
         [SerializeField] private SkillType _skillType;
         [SerializeField] private SkillType[] _neighbors;
         [SerializeField] private TextMeshProUGUI _costText;
-        [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private Button _skillButton;
         [SerializeField] private Button _learnBtn;
         [SerializeField] private Button _forgetBtn;
-        [SerializeField] private Image _skillImage;
+        [SerializeField] private Image _mainImage;
 
         private Ctx _ctx;
         private bool _isBase;
         private bool _isActive;
         private bool _isLearned;
-        private int _cost;
 
         public SkillType SkillType => _skillType;
         public SkillType[] Neighbors => _neighbors;
@@ -30,21 +28,27 @@ namespace Skills
 
         public class Ctx
         {
-            public ReactiveCommand<SkillType> LearnSkill;
-            public ReactiveCommand<(SkillType, int)> OnSkillLearned;
-            public ReactiveCommand<(SkillType, int)> OnSkillForget;
             public SkillConfig Config;
+            public ReactiveCommand<SkillType> OnSkillSelected;
+            public ReactiveCommand<SkillType> OnLearnSkillClicked;
+            public ReactiveCommand<SkillStatus> UpdateSkillStatus;
+            public ReactiveCommand<(SkillType, int)> OnSkillLearned;
+            public ReactiveCommand<(SkillType, int)> OnSkillForgotten;
         }
 
         public void Initialize(Ctx ctx)
         {
             _ctx = ctx;
-            _cost = ctx.Config.Cost;
             _isBase = ctx.Config.IsBase;
+            _ctx.UpdateSkillStatus.Subscribe(UpdateStatus).AddTo(this);
 
             if (_isBase)
             {
                 SetActiveState();
+            }
+            else
+            {
+                SetLearnedView();
             }
         }
 
@@ -67,27 +71,36 @@ namespace Skills
                 _learnBtn.gameObject.SetActive(false);
                 _forgetBtn.gameObject.SetActive(false);
             }
+
+            _ctx.OnSkillSelected?.Execute(_ctx.Config.Type);
         }
 
-        public void OnLearnButtonClick()
+        private void OnLearnButtonClick()
         {
         }
 
-        public void OnForgetButtonClick()
+        private void OnForgetButtonClick()
         {
         }
 
-        public void UpdateStatus()
+        private void UpdateStatus(SkillStatus status)
         {
-            // _costText.text = $"Изучить: {ctx.config.Cost.ToString()}";
-            // _canvasGroup.alpha = isActive ? 1 : .5f;
-            // _learnBtn.gameObject.SetActive(!_isLearned);
-            // _forgetBtn.gameObject.SetActive(_isLearned);
+            _costText.text = $"Изучить: {_ctx.Config.Cost.ToString()}";
+
+            _learnBtn.gameObject.SetActive(status.CanBeLearned);
+            _forgetBtn.gameObject.SetActive(status.CanBeForgotten);
         }
 
         private void OnDestroy()
         {
             _skillButton.onClick.RemoveListener(SetActiveState);
+        }
+
+        private void SetLearnedView()
+        {
+            Color color = _mainImage.color;
+            color.a = _ctx.Config.IsLearned ? 1 : .5f;
+            _mainImage.color = color;
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Configs
     {
         public SkillType Type;
         public int Cost;
+        public bool IsLearned;
         public string Name;
         public bool IsBase;
     }

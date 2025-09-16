@@ -10,8 +10,11 @@ namespace Skills
     public class SkillsRoot : BaseDisposable
     {
         private readonly Ctx _ctx;
+        
         private List<SkillPm> _models;
+        
         private ReactiveCommand<SkillType> _onSkillSelected;
+        private ReactiveCommand<SkillStatus> _updateSkillStatus;
         private ReactiveCommand<SkillType> _onLearnSkillClicked;
 
         public class Ctx
@@ -52,12 +55,16 @@ namespace Skills
 
                 view.Initialize(new SkillView.Ctx
                 {
-                    Config = config
+                    Config = config,
+                    OnSkillSelected = _onSkillSelected,
+                    OnLearnSkillClicked = _onLearnSkillClicked,
+                    OnSkillLearned = _ctx.OnSkillLearned,
+                    OnSkillForgotten = _ctx.OnSkillForgotten,
                 });
 
                 SkillPm model = new SkillPm(new SkillPm.Ctx
                 {
-                    Config = config,
+                    Config = config
                 });
 
                 AddUnsafe(model);
@@ -73,6 +80,7 @@ namespace Skills
                 Skills = _models,
                 OnSkillSelected =_onSkillSelected,
                 OnLearnSkillClicked = _onLearnSkillClicked,
+                UpdateSkillStatus = _updateSkillStatus,
                 OnSkillLearned = _ctx.OnSkillLearned,
                 OnSkillForgotten = _ctx.OnSkillForgotten
             }));

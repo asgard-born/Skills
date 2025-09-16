@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7768198533776047116}
   - component: {fileID: 4739049709020603253}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Learn Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38,7 +38,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -1.9671, y: -72}
-  m_SizeDelta: {x: 191.9025, y: 30}
+  m_SizeDelta: {x: 170.3127, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7602579208669983437
 CanvasRenderer:
@@ -61,7 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.09767267, g: 0.8207547, b: 0.036133777, a: 1}
+  m_Color: {r: 0.09767267, g: 0.8207547, b: 0.036133777, a: 0.7921569}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -270,7 +270,7 @@ GameObject:
   - component: {fileID: 2549611528122991568}
   - component: {fileID: 2141663197728577768}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: Forget Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -318,7 +318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.81960785, g: 0.29694068, b: 0.035294127, a: 1}
+  m_Color: {r: 0.81960785, g: 0.29694068, b: 0.035294127, a: 0.87058824}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -715,10 +715,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _skillType: 0
   _neighbors: 
-  _cost: {fileID: 0}
-  _learn: {fileID: 4739049709020603253}
-  _forget: {fileID: 2141663197728577768}
-  _skillImage: {fileID: 0}
+  _costText: {fileID: 3503964740745143017}
+  _canvasGroup: {fileID: 3197139138074379799}
+  _skillButton: {fileID: 4346092857486782638}
+  _learnBtn: {fileID: 4739049709020603253}
+  _forgetBtn: {fileID: 2141663197728577768}
 --- !u!114 &8608098225450674338
 MonoBehaviour:
   m_ObjectHideFlags: 0
