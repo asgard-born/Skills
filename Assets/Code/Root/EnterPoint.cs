@@ -10,7 +10,6 @@ namespace Root
     {
         [SerializeField] private SkillView[] _skillViews;
         [SerializeField] private SkillSetConfig _skillsConfig;
-        [SerializeField] private ResourcesConfig _resourcesConfig;
         
         private void Start()
         {
@@ -23,15 +22,14 @@ namespace Root
             new GameRoot(
                 new GameRoot.Ctx
                 {
-                    ResourcesConfig = _resourcesConfig
-
+                    SkillViews = _skillViews,
+                    SkillsConfig = _skillsConfig,
                 }).AddTo(this);
         }
         
         private void ValidateData()
         {
             Assert.IsNotNull(_skillsConfig, "Skills config cannot be null");
-            Assert.IsNotNull(_resourcesConfig, "Resources config cannot be null");
             Assert.IsNotNull(_skillViews, "Skill views cannot be null");
             Assert.IsTrue(_skillViews.Length > 1, "Skill views must has several elements");
         }

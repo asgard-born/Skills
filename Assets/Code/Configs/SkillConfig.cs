@@ -4,7 +4,7 @@ using Skills;
 namespace Configs
 {
     [Serializable]
-    public struct SkillConfig
+    public class SkillConfig
     {
         public SkillType Type;
         public int Cost;
