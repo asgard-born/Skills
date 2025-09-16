@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: c1187ddcdf7dd0a4b97e20b55d7f1864
+  m_SerializeEntries:
+  - m_GUID: 146650c8d020b3d469058cbf2bcbe59d
+    m_Address: Assets/Data/Prefabs/Skill.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f0f090a9cc935524eb3e96c0e7a0d2d4
+    m_Address: Assets/Data/Prefabs/Base_Skill.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: c336253d7342aff4cb6ea67baf1a806f, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0d34b631154727a4ca31e274ce1b624b, type: 2}
+    - {fileID: 11400000, guid: 5fe418468933c5347947e9150d00996a, type: 2}
