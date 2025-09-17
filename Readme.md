@@ -5,36 +5,34 @@
 `SkillsService` manages a **skill tree** (UI presentation) built on a **skill graph** (data structure) with these features:
 
 - Tracks learned and base skills
-- Determines which skills can be learned or forgotten
+- Determines learnable/forgettable skills
 - Ensures all learned skills remain connected to a base skill
-- Updates the UI **reactively** via `SkillViewModel`, maintaining **loose coupling** between service and view
+- Updates UI **reactively** via `SkillViewModel` with **loose coupling** between service and view
 
 ---
 
 ## Key Concepts
 
-- **Base skill permanence**: Base skills can never be forgotten
-- **Connectivity requirement**: All learned skills must remain connected to base
-- **Point economy**: Learning costs points, forgetting refunds points
+### Core Principles
+- **Base skill permanence**: Base skills cannot be forgotten
+- **Connectivity requirement**: All skills must remain connected to base
+- **Point economy**: Learning costs points, forgetting refunds them
 - **UI consistency**: View models always reflect current game state
 
 ### SkillViewModel
 
-Represents a single skill in the tree.  
-It acts as a **data contract** between the service and the view, ensuring **reactive updates** with **loose coupling**.
+Acts as a **data contract** between service and view, enabling **reactive updates** with **loose coupling**.
 
 **Properties:**
-
-- `Type` – unique identifier of the skill
-- `Neighbors` – neighboring skills (connected vertices in the graph)
-- `Cost` – how many points are required to learn the skill
+- `Type` – skill identifier
+- `Neighbors` – connected skills
+- `Cost` – point cost to learn the skill
 - `IsBase` – whether this is a base skill (cannot be forgotten)
-- `IsLearned` – whether the skill is currently learned
-- `CanBeLearned` – whether the skill can currently be learned
-- `CanBeForgotten` – whether the skill can currently be forgotten
+- `IsLearned`
+- `CanBeLearned`
+- `CanBeForgotten`
 
-The view (`SkillView`) **subscribes to `SkillViewModel` changes** via ReactiveProperties/ReactiveCommands.  
-When the service updates the model, the UI refreshes automatically without any direct reference to the view.
+Views subscribe to `SkillViewModel` changes via ReactiveProperties/ReactiveCommands for automatic UI updates.
 
 ---
 
