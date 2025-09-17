@@ -4,7 +4,7 @@ using UniRx;
 
 namespace Skills
 {
-    public class SkillViewModel : BaseDisposable
+    public class SkillModel : BaseDisposable
     {
         private readonly Ctx _ctx;
 
@@ -22,7 +22,7 @@ namespace Skills
             public ReactiveCommand<SkillStatus> UpdateViewStatus;
         }
 
-        public SkillViewModel(Ctx ctx)
+        public SkillModel(Ctx ctx)
         {
             _ctx = ctx;
 

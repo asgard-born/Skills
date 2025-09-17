@@ -5,7 +5,7 @@ using UniRx;
 
 namespace Skills
 {
-    public class SkillsService : BaseDisposable
+    public class SkillsController : BaseDisposable
     {
         private SkillType _lastSelectedSkill;
         private readonly Ctx _ctx;
@@ -14,7 +14,7 @@ namespace Skills
 
         public class Ctx
         {
-            public List<SkillViewModel> Models;
+            public List<SkillModel> Models;
 
             public ReadOnlyReactiveProperty<int> Scores;
             public ReactiveCommand<SkillType> OnSkillSelected;
@@ -26,7 +26,7 @@ namespace Skills
             public ReactiveCommand OnForgetAllSkillsClicked;
         }
 
-        public SkillsService(Ctx ctx)
+        public SkillsController(Ctx ctx)
         {
             _ctx = ctx;
 
@@ -42,7 +42,7 @@ namespace Skills
 
         private void InitAllModels()
         {
-            foreach (SkillViewModel model in _ctx.Models)
+            foreach (SkillModel model in _ctx.Models)
             {
                 model.UpdateStatus(new SkillStatus
                 {
@@ -56,7 +56,7 @@ namespace Skills
 
         private void OnScoreChanged()
         {
-            SkillViewModel selectedModel = GetModel(_lastSelectedSkill);
+            SkillModel selectedModel = GetModel(_lastSelectedSkill);
 
             if (selectedModel != null)
             {
@@ -77,7 +77,7 @@ namespace Skills
             _ctx.UnselectSkill?.Execute(_lastSelectedSkill);
             _lastSelectedSkill = skillType;
 
-            SkillViewModel model = GetModel(skillType);
+            SkillModel model = GetModel(skillType);
 
             model.UpdateStatus(new SkillStatus
             {
@@ -90,7 +90,7 @@ namespace Skills
 
         private void OnLearnSkillClicked(SkillType type)
         {
-            SkillViewModel model = GetModel(type);
+            SkillModel model = GetModel(type);
             if (model == null || !CanBeLearned(model)) return;
 
             _ctx.OnSkillLearned?.Execute((type, model.Cost));
@@ -108,7 +108,7 @@ namespace Skills
 
         private void OnForgetSkillClicked(SkillType type)
         {
-            SkillViewModel model = GetModel(type);
+            SkillModel model = GetModel(type);
             if (model == null || !CanBeForgotten(model)) return;
 
             _ctx.OnSkillForgotten?.Execute((type, model.Cost));
@@ -126,25 +126,25 @@ namespace Skills
             RecalculateArticulationPoints();
         }
 
-        private SkillViewModel GetModel(SkillType type)
+        private SkillModel GetModel(SkillType type)
         {
             return _ctx.Models.FirstOrDefault(m => m.Type == type);
         }
 
-        private bool CanBeLearned(SkillViewModel viewModel)
+        private bool CanBeLearned(SkillModel model)
         {
-            if (viewModel.IsLearned) return false;
-            if (_ctx.Scores.Value < viewModel.Cost) return false;
+            if (model.IsLearned) return false;
+            if (_ctx.Scores.Value < model.Cost) return false;
 
-            return viewModel.Neighbors.Any(n => GetModel(n)?.IsLearned == true);
+            return model.Neighbors.Any(n => GetModel(n)?.IsLearned == true);
         }
 
-        private bool CanBeForgotten(SkillViewModel viewModel)
+        private bool CanBeForgotten(SkillModel model)
         {
-            if (!viewModel.IsLearned) return false;
-            if (viewModel.IsBase) return false;
+            if (!model.IsLearned) return false;
+            if (model.IsBase) return false;
 
-            return !_articulationPointsCache.Contains(viewModel.Type);
+            return !_articulationPointsCache.Contains(model.Type);
         }
 
         private void RecalculateArticulationPoints()
@@ -157,7 +157,7 @@ namespace Skills
             var parent = new Dictionary<SkillType, SkillType>();
             int time = 0;
 
-            void DepthFirstSearch(SkillViewModel model)
+            void DepthFirstSearch(SkillModel model)
             {
                 visited.Add(model.Type);
                 disc[model.Type] = low[model.Type] = ++time;
@@ -165,7 +165,7 @@ namespace Skills
 
                 foreach (SkillType nType in model.Neighbors)
                 {
-                    SkillViewModel neighbor = GetModel(nType);
+                    SkillModel neighbor = GetModel(nType);
                     if (neighbor == null || !neighbor.IsLearned) continue;
 
                     if (!visited.Contains(neighbor.Type))
@@ -193,7 +193,7 @@ namespace Skills
                 }
             }
 
-            SkillViewModel baseSkill = _ctx.Models.FirstOrDefault(s => s.IsBase);
+            SkillModel baseSkill = _ctx.Models.FirstOrDefault(s => s.IsBase);
 
             if (baseSkill != null && baseSkill.IsLearned)
             {
