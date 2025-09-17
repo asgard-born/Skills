@@ -23,16 +23,17 @@ namespace Skills
             _ctx = ctx;
 
             AddUnsafe(_ctx.OnViewSkillSelected.Subscribe(_ => OnViewSkillSelected()));
-            SendStatusToView();
+            AddUnsafe(_ctx.Scores.Subscribe(_ => UpdateViewStatus()));
+            UpdateViewStatus();
         }
 
         private void OnViewSkillSelected()
         {
             _ctx.SkillSelectionBus?.Execute(_ctx.Config.Type);
-            SendStatusToView();
+            UpdateViewStatus();
         }
 
-        private void SendStatusToView()
+        private void UpdateViewStatus()
         {
             var status = new SkillStatus
             {

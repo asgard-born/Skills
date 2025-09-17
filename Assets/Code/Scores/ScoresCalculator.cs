@@ -16,14 +16,7 @@ namespace Scores
         public ScoresCalculator(Ctx ctx)
         {
             _ctx = ctx;
-            AddUnsafe(ctx.OnEarnScoresClick.Subscribe(TryEarnScores));
-        }
-
-        private void TryEarnScores(int scores)
-        {
-            // Можно добавить проверки, например
-
-            AddScores(scores);
+            AddUnsafe(ctx.OnEarnScoresClick.Subscribe(AddScores));
         }
 
         private void AddScores(int scores)

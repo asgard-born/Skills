@@ -12,6 +12,7 @@ namespace Skills
         {
             public List<SkillPm> Skills;
 
+            public ReadOnlyReactiveProperty<int> Scores;
             public ReactiveCommand<SkillType> SkillSelectionBus;
             public ReactiveCommand<SkillType> UnselectSkill;
             public ReactiveCommand<SkillType> OnLearnSkillClicked;

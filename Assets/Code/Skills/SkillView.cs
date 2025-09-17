@@ -93,11 +93,14 @@ namespace Skills
         {
             _costText.text = $"Изучить: {_ctx.Config.Cost.ToString()}";
 
-            _learnBtn.gameObject.SetActive(status.CanBeLearned);
-
-            if (!_isBase)
+            if (_isSelected)
             {
-                _forgetBtn.gameObject.SetActive(status.CanBeForgotten);
+                _learnBtn.gameObject.SetActive(status.CanBeLearned);
+
+                if (!_isBase)
+                {
+                    _forgetBtn.gameObject.SetActive(status.CanBeForgotten);
+                }
             }
 
             Color color = _mainImage.color;
