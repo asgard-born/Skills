@@ -17,7 +17,6 @@ namespace Skills
         private ReactiveCommand<SkillType> _onLearnSkillClicked;
         private ReactiveCommand<SkillType> _onForgetSkillClicked;
         private ReactiveCommand<SkillType> _unselectSkill;
-        private ReactiveCommand _onForgetAllSkillsClicked;
 
         public class Ctx
         {
@@ -27,6 +26,7 @@ namespace Skills
             public ReadOnlyReactiveProperty<int> Scores;
             public ReactiveCommand<(SkillType, int)> OnSkillLearned;
             public ReactiveCommand<(SkillType, int)> OnSkillForgotten;
+            public ReactiveCommand OnForgetAllClick;
         }
 
         public SkillsRoot(Ctx ctx)
@@ -44,7 +44,6 @@ namespace Skills
             AddUnsafe(_onLearnSkillClicked = new ReactiveCommand<SkillType>());
             AddUnsafe(_onForgetSkillClicked = new ReactiveCommand<SkillType>());
             AddUnsafe(_unselectSkill = new ReactiveCommand<SkillType>());
-            AddUnsafe(_onForgetAllSkillsClicked = new ReactiveCommand());
         }
 
         private void InitializeSkills()
@@ -97,7 +96,7 @@ namespace Skills
                 OnForgetSkillClicked = _onForgetSkillClicked,
                 OnSkillLearned = _ctx.OnSkillLearned,
                 OnSkillForgotten = _ctx.OnSkillForgotten,
-                OnForgetAllSkillsClicked = _onForgetAllSkillsClicked
+                OnForgetAllSkillsClicked = _ctx.OnForgetAllClick
             }));
         }
     }

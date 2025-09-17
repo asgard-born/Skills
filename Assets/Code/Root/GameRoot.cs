@@ -63,6 +63,7 @@ namespace Root
                 SkillsConfigs = _ctx.SkillsConfig,
                 OnSkillLearned = _onSkillLearned,
                 OnSkillForgotten = _onSkillForgotten,
+                OnForgetAllClick = _onForgetAllClick,
                 Scores = _scores.ToReadOnlyReactiveProperty(),
             }));
         }
