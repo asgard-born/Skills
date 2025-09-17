@@ -9,8 +9,8 @@ namespace Scores
 
         public class Ctx
         {
-            public ReactiveCommand<int> OnEarnScoresClick;
             public ReactiveProperty<int> Scores;
+            public ReactiveCommand<int> OnEarnScoresClick;
         }
 
         public ScoresCalculator(Ctx ctx)

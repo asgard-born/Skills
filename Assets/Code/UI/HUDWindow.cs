@@ -5,18 +5,20 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class HudWindow : MonoBehaviour
+    public class HUDWindow : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _scoresValue;
         [SerializeField] private Button _earnButton;
+        [SerializeField] private Button _forgetAllButton;
         [SerializeField] private int _scoresPerClick = 100;
 
         private Ctx _ctx;
 
         public class Ctx
         {
+            public ReadOnlyReactiveProperty<int> Scores;
             public ReactiveCommand<int> OnEarnScoresClick;
-            public ReactiveProperty<int> Scores;
+            public ReactiveCommand OnForgetAllClick;
         }
 
         public void Initialize(Ctx ctx)
@@ -28,12 +30,18 @@ namespace UI
 
         private void Awake()
         {
-            _earnButton.onClick.AddListener(OnEarnButtonClick);
+            _earnButton.onClick.AddListener(EarnClickHandle);
+            _forgetAllButton.onClick.AddListener(ForgetAllClickHandle);
         }
 
-        private void OnEarnButtonClick()
+        private void EarnClickHandle()
         {
-            _ctx.OnEarnScoresClick.Execute(_scoresPerClick);
+            _ctx.OnEarnScoresClick?.Execute(_scoresPerClick);
+        }
+
+        private void ForgetAllClickHandle()
+        {
+            _ctx.OnForgetAllClick?.Execute();
         }
 
         private void UpdateScores(int scores)
@@ -43,7 +51,7 @@ namespace UI
 
         private void OnDestroy()
         {
-            _earnButton.onClick.RemoveListener(OnEarnButtonClick);
+            _earnButton.onClick.RemoveListener(ForgetAllClickHandle);
         }
     }
 }

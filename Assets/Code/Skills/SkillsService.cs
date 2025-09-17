@@ -6,13 +6,15 @@ namespace Skills
 {
     public class SkillsService : BaseDisposable
     {
-        private SkillPm _selectedSkill;
+        private SkillView _selectedSkill;
         
         public class Ctx
         {
             public List<SkillPm> Skills;
+            public List<SkillView> Views;
 
             public ReactiveCommand<SkillType> OnSkillSelected;
+            public ReactiveCommand<SkillType> UnselectSkill;
             public ReactiveCommand<SkillType> OnLearnSkillClicked;
             public ReactiveCommand<SkillStatus> UpdateSkillStatus;
             public ReactiveCommand<(SkillType, int)> OnSkillLearned;
@@ -25,8 +27,13 @@ namespace Skills
         {
             _ctx = ctx;
             AddUnsafe(_ctx.OnSkillSelected.Subscribe(OnSkillSelected));
+            AddUnsafe(_ctx.UnselectSkill.Subscribe(UnselectSkill));
         }
 
+        private void UnselectSkill(SkillType skillType)
+        {
+            
+        }
         private void OnSkillSelected(SkillType skillType)
         {
             var status = new SkillStatus

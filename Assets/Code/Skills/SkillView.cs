@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Skills
 {
-    [RequireComponent(typeof(Button), typeof(Image))]
+    [RequireComponent(typeof(Button))]
     public class SkillView : MonoBehaviour
     {
         [SerializeField] private SkillType _skillType;
@@ -16,20 +16,21 @@ namespace Skills
         [SerializeField] private Button _learnBtn;
         [SerializeField] private Button _forgetBtn;
         [SerializeField] private Image _mainImage;
+        [SerializeField] private Image _selectedImage;
 
         private Ctx _ctx;
         private bool _isBase;
-        private bool _isActive;
+        private bool _isSelected;
         private bool _isLearned;
 
         public SkillType SkillType => _skillType;
         public SkillType[] Neighbors => _neighbors;
-        public bool IsActive => _isActive;
 
         public class Ctx
         {
             public SkillConfig Config;
-            public ReactiveCommand<SkillType> OnSkillSelected;
+            public ReactiveCommand OnSkillSelected;
+            public ReactiveCommand<SkillType> UnselectSkill;
             public ReactiveCommand<SkillType> OnLearnSkillClicked;
             public ReactiveCommand<SkillStatus> UpdateSkillStatus;
             public ReactiveCommand<(SkillType, int)> OnSkillLearned;
@@ -41,30 +42,26 @@ namespace Skills
             _ctx = ctx;
             _isBase = ctx.Config.IsBase;
             _ctx.UpdateSkillStatus.Subscribe(UpdateStatus).AddTo(this);
+            _ctx.UnselectSkill.Subscribe(SetUnselectedState).AddTo(this);
 
             if (_isBase)
             {
-                SetActiveState();
+                SetSelectedState();
             }
             else
             {
-                SetLearnedView();
+                UpdateLearnedState();
             }
         }
 
         private void Awake()
         {
-            _skillButton.onClick.AddListener(SetActiveState);
-            SetInactiveState();
+            _skillButton.onClick.AddListener(SetSelectedState);
         }
 
-        private void SetInactiveState()
+        private void SetSelectedState()
         {
-        }
-
-        private void SetActiveState()
-        {
-            _isActive = true;
+            _isSelected = true;
 
             if (_isBase)
             {
@@ -72,7 +69,18 @@ namespace Skills
                 _forgetBtn.gameObject.SetActive(false);
             }
 
-            _ctx.OnSkillSelected?.Execute(_ctx.Config.Type);
+            _selectedImage.gameObject.SetActive(true);
+            _ctx.OnSkillSelected?.Execute();
+        }
+
+        private void SetUnselectedState(SkillType skillType)
+        {
+            if (_skillType != skillType || !_isSelected || _isBase) return;
+
+            _isSelected = false;
+            _learnBtn.gameObject.SetActive(false);
+            _forgetBtn.gameObject.SetActive(false);
+            _selectedImage.gameObject.SetActive(false);
         }
 
         private void OnLearnButtonClick()
@@ -93,10 +101,10 @@ namespace Skills
 
         private void OnDestroy()
         {
-            _skillButton.onClick.RemoveListener(SetActiveState);
+            _skillButton.onClick.RemoveListener(SetSelectedState);
         }
 
-        private void SetLearnedView()
+        private void UpdateLearnedState()
         {
             Color color = _mainImage.color;
             color.a = _ctx.Config.IsLearned ? 1 : .5f;
