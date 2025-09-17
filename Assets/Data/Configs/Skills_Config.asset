@@ -15,53 +15,79 @@ MonoBehaviour:
   _skills:
   - Type: 1
     Cost: 0
+    IsLearned: 1
     Name: "\u041A\u043B\u0438\u043D\u043E\u043A"
     IsBase: 1
+    Neighbors: 0205090b
   - Type: 2
     Cost: 150
+    IsLearned: 0
     Name: "\u0421\u0438\u043B\u044C\u043D\u044B\u0439 \u0423\u0434\u0430\u0440"
     IsBase: 0
+    Neighbors: 0103
   - Type: 3
     Cost: 200
+    IsLearned: 0
     Name: "\u0423\u0434\u0430\u0440 \u0432 \u043F\u0440\u044B\u0436\u043A\u0435"
     IsBase: 0
+    Neighbors: 0204
   - Type: 4
     Cost: 250
+    IsLearned: 0
     Name: "\u0423\u0434\u0430\u0440 \u0412\u0435\u0440\u0442\u0443\u0448\u043A\u0430"
     IsBase: 0
+    Neighbors: 0308
   - Type: 8
     Cost: 500
+    IsLearned: 0
     Name: "\u0423\u0434\u0430\u0440 \u041F\u043E\u043B\u0443\u043C\u0435\u0441\u044F\u0446"
     IsBase: 0
+    Neighbors: 0407
   - Type: 5
     Cost: 150
+    IsLearned: 0
     Name: "\u0411\u043B\u043E\u043A"
     IsBase: 0
+    Neighbors: 0106
   - Type: 6
     Cost: 200
+    IsLearned: 0
     Name: "\u041A\u043E\u043D\u0442\u0440\u0430\u0442\u0430\u043A\u0430"
     IsBase: 0
+    Neighbors: 0507
   - Type: 7
     Cost: 250
+    IsLearned: 0
     Name: "\u0423\u0434\u0430\u0440 \u042F\u0440\u043E\u0441\u0442\u044C"
     IsBase: 0
+    Neighbors: 0806
   - Type: 9
     Cost: 150
+    IsLearned: 0
     Name: "\u0420\u044B\u0432\u043E\u043A"
     IsBase: 0
+    Neighbors: 010a
   - Type: 10
     Cost: 200
+    IsLearned: 0
     Name: "\u0412\u044B\u043F\u0430\u0434"
     IsBase: 0
+    Neighbors: 090d
   - Type: 11
     Cost: 150
+    IsLearned: 0
     Name: "\u0424\u043E\u043A\u0443\u0441"
     IsBase: 0
+    Neighbors: 010c
   - Type: 12
     Cost: 200
+    IsLearned: 0
     Name: "\u041F\u0440\u043E\u043D\u0437\u0430\u043D\u0438\u0435"
     IsBase: 0
+    Neighbors: 0b0d
   - Type: 13
     Cost: 400
+    IsLearned: 0
     Name: "\u0420\u0430\u0437\u0440\u0435\u0437"
     IsBase: 0
+    Neighbors: 0a0c

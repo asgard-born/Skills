@@ -10,7 +10,6 @@ namespace Skills
     public class SkillView : MonoBehaviour
     {
         [SerializeField] private SkillType _skillType;
-        [SerializeField] private SkillType[] _neighbors;
         [SerializeField] private TextMeshProUGUI _costText;
         [SerializeField] private Button _skillButton;
         [SerializeField] private Button _learnBtn;
@@ -24,7 +23,6 @@ namespace Skills
         private bool _isLearned;
 
         public SkillType SkillType => _skillType;
-        public SkillType[] Neighbors => _neighbors;
 
         public class Ctx
         {

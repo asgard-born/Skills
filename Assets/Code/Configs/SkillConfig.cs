@@ -11,5 +11,6 @@ namespace Configs
         public bool IsLearned;
         public string Name;
         public bool IsBase;
+        public SkillType[] Neighbors;
     }
 }

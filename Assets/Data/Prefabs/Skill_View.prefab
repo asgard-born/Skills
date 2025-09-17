@@ -872,7 +872,8 @@ MonoBehaviour:
   _skillButton: {fileID: 4346092857486782638}
   _learnBtn: {fileID: 4739049709020603253}
   _forgetBtn: {fileID: 2141663197728577768}
-  _mainImage: {fileID: 0}
+  _mainImage: {fileID: 4036674963058739399}
+  _selectedImage: {fileID: 4046312910663656943}
 --- !u!225 &3197139138074379799
 CanvasGroup:
   m_ObjectHideFlags: 0
