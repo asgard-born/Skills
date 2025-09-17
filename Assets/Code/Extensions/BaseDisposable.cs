@@ -63,7 +63,9 @@ namespace Extensions
                 foreach (Object obj in _unityObjects)
                 {
                     if (obj)
+                    {
                         Object.Destroy(obj);
+                    }
                 }
             }
         }

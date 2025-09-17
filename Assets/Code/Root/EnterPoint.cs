@@ -4,7 +4,6 @@ using UI;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Serialization;
 
 namespace Root
 {

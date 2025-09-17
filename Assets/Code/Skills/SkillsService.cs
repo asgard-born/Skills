@@ -177,10 +177,14 @@ namespace Skills
                         low[model.Type] = System.Math.Min(low[model.Type], low[neighbor.Type]);
 
                         if (!parent.ContainsKey(model.Type) && children > 1)
+                        {
                             _articulationPointsCache.Add(model.Type);
+                        }
 
                         if (parent.ContainsKey(model.Type) && low[neighbor.Type] >= disc[model.Type])
+                        {
                             _articulationPointsCache.Add(model.Type);
+                        }
                     }
                     else if (parent.ContainsKey(model.Type) && neighbor.Type != parent[model.Type])
                     {
@@ -208,7 +212,9 @@ namespace Skills
                     .ToList();
 
                 if (removable.Count == 0)
+                {
                     break;
+                }
 
                 foreach (var model in removable)
                 {
