@@ -2,7 +2,7 @@
 
 ## Overview
 
-`SkillsService` manages a skill tree system with these features:
+`SkillsService` manages a **skill tree** (UI presentation) built on a **skill graph** (data structure) with these features:
 
 - Tracks learned and base skills
 - Determines which skills can be learned or forgotten
