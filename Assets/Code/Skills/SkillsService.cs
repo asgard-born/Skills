@@ -95,8 +95,6 @@ namespace Skills
 
             _ctx.OnSkillLearned?.Execute((type, model.Cost));
 
-            RecalculateArticulationPoints();
-
             model.UpdateStatus(new SkillStatus
             {
                 Type = model.Type,
@@ -104,6 +102,8 @@ namespace Skills
                 CanBeLearned = false,
                 CanBeForgotten = !model.IsBase
             });
+            
+            RecalculateArticulationPoints();
         }
 
         private void OnForgetSkillClicked(SkillType type)
@@ -112,8 +112,6 @@ namespace Skills
             if (model == null || !CanBeForgotten(model)) return;
 
             _ctx.OnSkillForgotten?.Execute((type, model.Cost));
-
-            RecalculateArticulationPoints();
 
             model.IsLearned = false;
 
@@ -124,6 +122,8 @@ namespace Skills
                 CanBeLearned = CanBeLearned(model),
                 CanBeForgotten = false
             });
+            
+            RecalculateArticulationPoints();
         }
 
         private SkillViewModel GetModel(SkillType type)
