@@ -12,17 +12,14 @@ namespace Skills
         public SkillType[] Neighbors { get; }
         public int Cost { get; }
         public bool IsBase { get; }
-        public bool IsLearned { get; set; }
+        public bool IsLearned { get; private set; }
         public bool CanBeLearned { get; private set; }
         public bool CanBeForgotten { get; private set; }
 
         public class Ctx
         {
             public SkillConfig Config;
-            public ReactiveCommand<SkillType> SkillSelectionGlobal;
             public ReactiveCommand<SkillStatus> UpdateViewStatus;
-            public ReactiveCommand<(SkillType, int)> OnSkillLearned;
-            public ReactiveCommand<(SkillType, int)> OnSkillForgotten;
         }
 
         public SkillViewModel(Ctx ctx)
@@ -34,7 +31,6 @@ namespace Skills
             Cost = _ctx.Config.Cost;
             Neighbors = _ctx.Config.Neighbors;
             IsLearned = _ctx.Config.IsLearned;
-
         }
 
         public void UpdateStatus(SkillStatus status)

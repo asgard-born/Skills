@@ -30,7 +30,7 @@ namespace Skills
             public ReactiveCommand<SkillType> UnselectSkill;
             public ReactiveCommand<SkillType> OnLearnSkillClicked;
             public ReactiveCommand<SkillStatus> UpdateStatus;
-            public ReactiveCommand<SkillType> OnSkillForgetClicked;
+            public ReactiveCommand<SkillType> OnForgetSkillClicked;
         }
 
         public void Initialize(Ctx ctx)
@@ -86,7 +86,7 @@ namespace Skills
 
         private void OnForgetButtonClick()
         {
-            _ctx.OnSkillForgetClicked?.Execute(_skillType);
+            _ctx.OnForgetSkillClicked?.Execute(_skillType);
         }
 
         private void UpdateStatus(SkillStatus viewStatus)

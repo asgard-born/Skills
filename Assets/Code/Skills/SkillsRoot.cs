@@ -15,7 +15,9 @@ namespace Skills
 
         private ReactiveCommand<SkillType> _onSkillSelected;
         private ReactiveCommand<SkillType> _onLearnSkillClicked;
+        private ReactiveCommand<SkillType> _onForgetSkillClicked;
         private ReactiveCommand<SkillType> _unselectSkill;
+        private ReactiveCommand _onForgetAllSkillsClicked;
 
         public class Ctx
         {
@@ -40,7 +42,9 @@ namespace Skills
         {
             AddUnsafe(_onSkillSelected = new ReactiveCommand<SkillType>());
             AddUnsafe(_onLearnSkillClicked = new ReactiveCommand<SkillType>());
+            AddUnsafe(_onForgetSkillClicked = new ReactiveCommand<SkillType>());
             AddUnsafe(_unselectSkill = new ReactiveCommand<SkillType>());
+            AddUnsafe(_onForgetAllSkillsClicked = new ReactiveCommand());
         }
 
         private void InitializeSkills()
@@ -65,14 +69,13 @@ namespace Skills
                     UpdateStatus = updateViewStatus,
                     UnselectSkill = _unselectSkill,
                     OnLearnSkillClicked = _onLearnSkillClicked,
+                    OnForgetSkillClicked = _onForgetSkillClicked
                 });
 
                 SkillViewModel viewModel = new SkillViewModel(new SkillViewModel.Ctx
                 {
                     Config = config,
-                    SkillSelectionGlobal = _onSkillSelected,
-                    OnSkillLearned = _ctx.OnSkillLearned,
-                    OnSkillForgotten = _ctx.OnSkillForgotten,
+                    UpdateViewStatus = updateViewStatus,
                 });
 
                 AddUnsafe(viewModel);
@@ -86,9 +89,15 @@ namespace Skills
             AddUnsafe(new SkillsService(new SkillsService.Ctx
             {
                 Models = _models,
+
+                Scores = _ctx.Scores,
                 OnSkillSelected = _onSkillSelected,
                 UnselectSkill = _unselectSkill,
                 OnLearnSkillClicked = _onLearnSkillClicked,
+                OnForgetSkillClicked = _onForgetSkillClicked,
+                OnSkillLearned = _ctx.OnSkillLearned,
+                OnSkillForgotten = _ctx.OnSkillForgotten,
+                OnForgetAllSkillsClicked = _onForgetAllSkillsClicked
             }));
         }
     }

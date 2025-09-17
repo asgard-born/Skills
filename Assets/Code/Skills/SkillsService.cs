@@ -21,9 +21,9 @@ namespace Skills
             public ReactiveCommand<SkillType> UnselectSkill;
             public ReactiveCommand<SkillType> OnLearnSkillClicked;
             public ReactiveCommand<SkillType> OnForgetSkillClicked;
-            public ReactiveCommand<SkillType> OnForgetAllSkillsClicked;
             public ReactiveCommand<(SkillType, int)> OnSkillLearned;
             public ReactiveCommand<(SkillType, int)> OnSkillForgotten;
+            public ReactiveCommand OnForgetAllSkillsClicked;
         }
 
         public SkillsService(Ctx ctx)
@@ -33,9 +33,25 @@ namespace Skills
             AddUnsafe(_ctx.Scores.Subscribe(_ => OnScoreChanged()));
             AddUnsafe(_ctx.OnSkillSelected.Subscribe(OnSkillSelected));
             AddUnsafe(_ctx.OnLearnSkillClicked.Subscribe(OnLearnSkillClicked));
-            AddUnsafe(_ctx.OnForgetSkillClicked.Subscribe(OnForgetSkill));
+            AddUnsafe(_ctx.OnForgetSkillClicked.Subscribe(ForgetSkill));
+            AddUnsafe(_ctx.OnForgetAllSkillsClicked.Subscribe(_ => ForgetAllSkills()));
 
             RecalculateArticulationPoints();
+            InitAllModels();
+        }
+
+        private void InitAllModels()
+        {
+            foreach (SkillViewModel model in _ctx.Models)
+            {
+                model.UpdateStatus(new SkillStatus
+                {
+                    Type = model.Type,
+                    IsLearned = model.IsLearned,
+                    CanBeLearned = CanBeLearned(model),
+                    CanBeForgotten = CanBeForgotten(model)
+                });
+            }
         }
 
         private void OnScoreChanged()
@@ -56,6 +72,8 @@ namespace Skills
 
         private void OnSkillSelected(SkillType skillType)
         {
+            if (skillType == _lastSelectedSkill) return;
+            
             _ctx.UnselectSkill?.Execute(_lastSelectedSkill);
             _lastSelectedSkill = skillType;
 
@@ -76,7 +94,7 @@ namespace Skills
             if (model == null || !CanBeLearned(model)) return;
 
             _ctx.OnSkillLearned?.Execute((type, model.Cost));
-            
+
             RecalculateArticulationPoints();
 
             model.UpdateStatus(new SkillStatus
@@ -88,13 +106,13 @@ namespace Skills
             });
         }
 
-        private void OnForgetSkill(SkillType type)
+        private void ForgetSkill(SkillType type)
         {
             SkillViewModel model = GetModel(type);
             if (model == null || !CanBeForgotten(model)) return;
 
             _ctx.OnSkillForgotten?.Execute((type, model.Cost));
-            
+
             RecalculateArticulationPoints();
 
             model.UpdateStatus(new SkillStatus
@@ -177,7 +195,7 @@ namespace Skills
             }
         }
 
-        public List<SkillType> ForgetAllSkills()
+        private void ForgetAllSkills()
         {
             var order = new List<SkillType>();
 
@@ -209,8 +227,6 @@ namespace Skills
 
                 RecalculateArticulationPoints();
             }
-
-            return order;
         }
     }
 }

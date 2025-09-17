@@ -49,7 +49,9 @@ namespace Root
             AddUnsafe(new ScoresCalculator(new ScoresCalculator.Ctx
             {
                 Scores = _scores,
-                OnEarnScoresClick = _onEarnScoresClick
+                OnEarnScoresClick = _onEarnScoresClick,
+                OnSkillLearned = _onSkillLearned,
+                OnSkillForgotten = _onSkillForgotten
             }));
         }
 
