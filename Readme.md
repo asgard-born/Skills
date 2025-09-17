@@ -4,68 +4,83 @@
 
 `SkillsService` manages a skill tree system with these features:
 
-- Tracks learned and base skills.
-- Determines which skills can be learned or forgotten.
-- Ensures all learned skills remain connected to a base skill.
-- Updates the UI **reactively** via `SkillViewModel`, keeping a **loose coupling** between service and view.
+- Tracks learned and base skills
+- Determines which skills can be learned or forgotten
+- Ensures all learned skills remain connected to a base skill
+- Updates the UI **reactively** via `SkillViewModel`, maintaining **loose coupling** between service and view
 
 ---
 
 ## Key Concepts
 
+- **Base skill permanence**: Base skills can never be forgotten
+- **Connectivity requirement**: All learned skills must remain connected to base
+- **Point economy**: Learning costs points, forgetting refunds points
+- **UI consistency**: View models always reflect current game state
+
 ### SkillViewModel
 
 Represents a single skill in the tree.  
-It acts as a contract between the service and the view, ensuring **reactive updates** with **loose coupling**.
+It acts as a **data contract** between the service and the view, ensuring **reactive updates** with **loose coupling**.
 
 **Properties:**
 
-- `Type` – unique identifier of the skill.
-- `Neighbors` – list of connected skills (graph edges).
-- `Cost` – how many scores are required to learn the skill.
-- `IsBase` – whether this is a base skill (cannot be forgotten).
-- `IsLearned` – whether the skill is currently learned.
-- `CanBeLearned` – whether the skill can currently be learned.
-- `CanBeForgotten` – whether the skill can currently be forgotten.
+- `Type` – unique identifier of the skill
+- `Neighbors` – neighboring skills (connected vertices in the graph)
+- `Cost` – how many points are required to learn the skill
+- `IsBase` – whether this is a base skill (cannot be forgotten)
+- `IsLearned` – whether the skill is currently learned
+- `CanBeLearned` – whether the skill can currently be learned
+- `CanBeForgotten` – whether the skill can currently be forgotten
 
-The view (`SkillView`) **subscribes to `SkillViewModel` changes**.  
-When the service updates the model, the UI refreshes automatically without any direct call to the view.
+The view (`SkillView`) **subscribes to `SkillViewModel` changes** via ReactiveProperties/ReactiveCommands.  
+When the service updates the model, the UI refreshes automatically without any direct reference to the view.
 
 ---
 
 ## Articulation Points Algorithm
 
-The service calculates **articulation points** in the learned skill graph:
+The service uses **Tarjan's algorithm** for finding articulation points:
 
-- Uses **Depth-First Search (DFS)** starting from the base skill.
-- Tracks discovery times and low-link values to detect skills whose removal would disconnect the graph.
-- These critical skills cannot be forgotten, ensuring all remaining skills stay connected to the base.
+- Uses **Depth-First Search (DFS)** starting from the base skill
+- Based on proven computer science principles
+- Tracks discovery times (`disc`) and low-link values (`low`) to detect critical skills
+- Skills whose removal would disconnect the graph from the base cannot be forgotten
+- Maintains connectivity ensuring all remaining skills stay linked to the base
 
-DFS efficiently explores the skill tree and calculates low-link values for articulation points.  
-This ensures no learned skill becomes disconnected from the base skill when forgetting skills.
+The algorithm efficiently (O(V+E)) identifies articulation points in the learned skill graph.
+
 ---
+## Performance Efficiency
+- **O(V + E)** complexity - fastest possible for graph traversal
+- Executes in milliseconds even for large skill trees
+- Only runs when skill tree structure changes
+- View model updates are optimized to only affect changed skills
+- Reactive architecture minimizes unnecessary UI updates
 
+---
 ## How the Service Works
 
-1. **Skill Selection**
-    - Updates the selected skill’s status via the view model.
+### 1. Initialization
+- Sets up reactive subscriptions to score changes and user actions
+- Initializes all skill view models with their initial status
 
-2. **Learning a Skill**
-    - Checks if the skill can be learned.
-    - Marks the skill as learned via the view model.
+### 2. Skill Selection
+- Updates the selected skill's status via the view model
+- Recalculates articulation points to ensure UI reflects current state
 
-3. **Forgetting a Skill**
-    - Checks if the skill can be forgotten.
-    - Marks the skill as forgotten via the view model.
+### 3. Learning a Skill
+- Checks prerequisites: sufficient points and adjacent learned skill
+- Marks skill as learned and updates view model
+- Recalculates articulation points for the modified graph
 
-4. **Forgetting All Skills**
-    - Iteratively removes all forgettable skills while maintaining base connectivity.
-    - Updates each skill via the view model contract.
-- Recalculates articulation points to ensure remaining skills are still connected.
----
+### 4. Forgetting a Skill
+- Checks if skill is not base and not an articulation point
+- Marks skill as forgotten and updates view model
+- Returns skill points and recalculates articulation points
 
-## Notes
-
-- Only skills connected to a base skill (directly or through a chain of learned skills) can be forgotten.
-- The service **never updates views directly**; it only updates view models.
-- UI reacts automatically to changes in the view model, maintaining **weak coupling** and separation of concerns.
+### 5. Forgetting All Skills
+- Iteratively removes all forgettable skills while maintaining connectivity
+- Processes skills in optimal order to maximize forgettable skills
+- Updates each skill status via view model contract
+- Recalculates articulation points after each change
