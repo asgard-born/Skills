@@ -456,6 +456,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _skillType: 1
+  _skillText: {fileID: 1838128963846897894}
   _costText: {fileID: 1096876913}
   _skillButton: {fileID: 8652051100751132245}
   _learnBtn: {fileID: 458405543}

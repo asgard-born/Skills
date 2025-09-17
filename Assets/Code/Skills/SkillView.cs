@@ -10,6 +10,7 @@ namespace Skills
     public class SkillView : MonoBehaviour
     {
         [SerializeField] private SkillType _skillType;
+        [SerializeField] private TextMeshProUGUI _skillText;
         [SerializeField] private TextMeshProUGUI _costText;
         [SerializeField] private Button _skillButton;
         [SerializeField] private Button _learnBtn;
@@ -37,6 +38,7 @@ namespace Skills
         {
             _ctx = ctx;
             _isBase = ctx.Config.IsBase;
+            _skillText.text = ctx.Config.Name;
             _ctx.UpdateStatus.Subscribe(UpdateStatus).AddTo(this);
             _ctx.UnselectSkill.Subscribe(SetUnselectedState).AddTo(this);
 
