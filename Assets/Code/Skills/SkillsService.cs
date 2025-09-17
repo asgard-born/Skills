@@ -21,6 +21,7 @@ namespace Skills
             public ReactiveCommand<SkillType> UnselectSkill;
             public ReactiveCommand<SkillType> OnLearnSkillClicked;
             public ReactiveCommand<SkillType> OnForgetSkillClicked;
+            public ReactiveCommand<SkillType> OnForgetAllSkillsClicked;
             public ReactiveCommand<(SkillType, int)> OnSkillLearned;
             public ReactiveCommand<(SkillType, int)> OnSkillForgotten;
         }
@@ -60,8 +61,6 @@ namespace Skills
 
             SkillViewModel model = GetModel(skillType);
 
-            RecalculateArticulationPoints();
-
             model.UpdateStatus(new SkillStatus
             {
                 Type = model.Type,
@@ -77,15 +76,15 @@ namespace Skills
             if (model == null || !CanBeLearned(model)) return;
 
             _ctx.OnSkillLearned?.Execute((type, model.Cost));
-
+            
             RecalculateArticulationPoints();
 
             model.UpdateStatus(new SkillStatus
             {
                 Type = model.Type,
                 IsLearned = true,
-                CanBeLearned = CanBeLearned(model),
-                CanBeForgotten = CanBeForgotten(model)
+                CanBeLearned = false,
+                CanBeForgotten = !model.IsBase
             });
         }
 
@@ -95,7 +94,7 @@ namespace Skills
             if (model == null || !CanBeForgotten(model)) return;
 
             _ctx.OnSkillForgotten?.Execute((type, model.Cost));
-
+            
             RecalculateArticulationPoints();
 
             model.UpdateStatus(new SkillStatus
@@ -103,7 +102,7 @@ namespace Skills
                 Type = model.Type,
                 IsLearned = false,
                 CanBeLearned = CanBeLearned(model),
-                CanBeForgotten = CanBeForgotten(model)
+                CanBeForgotten = false
             });
         }
 
@@ -184,7 +183,6 @@ namespace Skills
 
             while (true)
             {
-                // Берём навыки, которые можно забыть
                 var removable = _ctx.Models
                     .Where(m => m.IsLearned && !m.IsBase && CanBeForgotten(m))
                     .ToList();
@@ -210,19 +208,6 @@ namespace Skills
                 }
 
                 RecalculateArticulationPoints();
-            }
-
-            foreach (var model in _ctx.Models)
-            {
-                var status = new SkillStatus
-                {
-                    Type = model.Type,
-                    IsLearned = model.IsLearned,
-                    CanBeLearned = CanBeLearned(model),
-                    CanBeForgotten = CanBeForgotten(model)
-                };
-
-                model.UpdateStatus(status);
             }
 
             return order;
