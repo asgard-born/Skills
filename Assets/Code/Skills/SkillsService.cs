@@ -138,7 +138,7 @@ namespace Skills
             var parent = new Dictionary<SkillType, SkillType>();
             int time = 0;
 
-            void DFS(SkillViewModel model)
+            void DepthFirstSearch(SkillViewModel model)
             {
                 visited.Add(model.Type);
                 disc[model.Type] = low[model.Type] = ++time;
@@ -153,7 +153,7 @@ namespace Skills
                     {
                         children++;
                         parent[neighbor.Type] = model.Type;
-                        DFS(neighbor);
+                        DepthFirstSearch(neighbor);
 
                         low[model.Type] = System.Math.Min(low[model.Type], low[neighbor.Type]);
 
@@ -174,43 +174,47 @@ namespace Skills
 
             if (baseSkill != null && baseSkill.IsLearned)
             {
-                DFS(baseSkill);
+                DepthFirstSearch(baseSkill);
             }
         }
 
         public List<SkillType> ForgetAllSkills()
         {
-            List<SkillType> order = new List<SkillType>();
+            var order = new List<SkillType>();
 
             while (true)
             {
-                List<SkillViewModel> removable = _ctx.Models
+                // Берём навыки, которые можно забыть
+                var removable = _ctx.Models
                     .Where(m => m.IsLearned && !m.IsBase && CanBeForgotten(m))
                     .ToList();
 
                 if (removable.Count == 0)
                     break;
 
-                foreach (SkillViewModel model in removable)
+                foreach (var model in removable)
                 {
-                    model.IsLearned = false;
+                    var status = new SkillStatus
+                    {
+                        Type = model.Type,
+                        IsLearned = false,
+                        CanBeLearned = CanBeLearned(model),
+                        CanBeForgotten = false
+                    };
+
+                    model.UpdateStatus(status);
+
                     _ctx.OnSkillForgotten?.Execute((model.Type, model.Cost));
+
                     order.Add(model.Type);
                 }
 
                 RecalculateArticulationPoints();
             }
 
-            UpdateAllStatusesAfterForget();
-
-            return order;
-        }
-
-        private void UpdateAllStatusesAfterForget()
-        {
-            foreach (SkillViewModel model in _ctx.Models)
+            foreach (var model in _ctx.Models)
             {
-                SkillStatus status = new SkillStatus
+                var status = new SkillStatus
                 {
                     Type = model.Type,
                     IsLearned = model.IsLearned,
@@ -220,6 +224,8 @@ namespace Skills
 
                 model.UpdateStatus(status);
             }
+
+            return order;
         }
     }
 }
