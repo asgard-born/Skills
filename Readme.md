@@ -14,13 +14,22 @@
 ## Key Concepts
 
 ### SkillViewModel
-Represents a single skill with properties:
 
+Represents a single skill in the tree.  
+It acts as a contract between the service and the view, ensuring **reactive updates** with **loose coupling**.
+
+**Properties:**
+
+- `Type` – unique identifier of the skill.
+- `Neighbors` – list of connected skills (graph edges).
+- `Cost` – how many scores are required to learn the skill.
+- `IsBase` – whether this is a base skill (cannot be forgotten).
 - `IsLearned` – whether the skill is currently learned.
-- `IsBase` – whether the skill is a base skill.
-- `Neighbors` – skills connected to this skill in the tree.
+- `CanBeLearned` – whether the skill can currently be learned.
+- `CanBeForgotten` – whether the skill can currently be forgotten.
 
-The **view (`SkillView`) updates automatically** when the `SkillViewModel` changes. The service never interacts with the view directly, only through the view model contracts.
+The view (`SkillView`) **subscribes to `SkillViewModel` changes**.  
+When the service updates the model, the UI refreshes automatically without any direct call to the view.
 
 ---
 
@@ -32,6 +41,8 @@ The service calculates **articulation points** in the learned skill graph:
 - Tracks discovery times and low-link values to detect skills whose removal would disconnect the graph.
 - These critical skills cannot be forgotten, ensuring all remaining skills stay connected to the base.
 
+DFS efficiently explores the skill tree and calculates low-link values for articulation points.  
+This ensures no learned skill becomes disconnected from the base skill when forgetting skills.
 ---
 
 ## How the Service Works
@@ -51,13 +62,6 @@ The service calculates **articulation points** in the learned skill graph:
     - Iteratively removes all forgettable skills while maintaining base connectivity.
     - Updates each skill via the view model contract.
 - Recalculates articulation points to ensure remaining skills are still connected.
----
-
-## Why DFS is Used
-
-DFS efficiently explores the skill tree and calculates low-link values for articulation points.  
-This ensures no learned skill becomes disconnected from the base skill when forgetting skills.
-
 ---
 
 ## Notes
