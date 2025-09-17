@@ -1,84 +1,81 @@
-﻿# SkillsService & Articulation Points Algorithm
-
-## Overview
-
-`SkillsService` manages a **skill tree** (UI presentation) built on a **skill graph** (data structure) with these features:
-
-- Tracks learned and base skills
-- Determines learnable/forgettable skills
-- Ensures all learned skills remain connected to a base skill
-- Updates UI **reactively** via `SkillViewModel` with **loose coupling** between service and view
-
+﻿# Умения игрока
+Игрок обладает набором умений, которые он может постепенно изучать
+- Очки для изучения зарабатываются в процессе игры и расходуются при получении новых умений
+- Каждое умение имеет стоимость
+- Между умениями существует ненаправленный граф связей
+- В начале игры игрок владеет только одним базовым умением
+- Новое умение можно изучить, только если выполнены оба условия:
+- У игрока достаточно очков для его изучения
+- Умение связано хотя бы с одним уже изученным умением
 ---
-
-## Key Concepts
-
-### Core Principles
-- **Base skill permanence**: Base skills cannot be forgotten
-- **Connectivity requirement**: All skills must remain connected to base
-- **Point economy**: Learning costs points, forgetting refunds them
-- **UI consistency**: View models always reflect current game state
+## Основные принципы
+- **Неизменность базового навыка** – базовые навыки нельзя забыть
+- **Требование связности** – все навыки должны оставаться связаны с базовым
+- **Экономия очков** – изучение тратит очки, забывание возвращает их
+- **Консистентность UI** – view models всегда отражают текущее состояние игры
 
 ### SkillViewModel
 
-Acts as a **data contract** between service and view, enabling **reactive updates** with **loose coupling**.
+Выступает как **контракт** между сервисом и представлением, обеспечивая **реактивные обновления** и **слабое зацепление**
 
-**Properties:**
-- `Type` – skill identifier
-- `Neighbors` – connected skills
-- `Cost` – point cost to learn the skill
-- `IsBase` – whether this is a base skill (cannot be forgotten)
-- `IsLearned`
-- `CanBeLearned`
-- `CanBeForgotten`
+**Свойства:**
+- `Type` – идентификатор навыка
+- `Neighbors` – соседние навыки
+- `Cost` – стоимость изучения
+- `IsBase` – является ли базовым навыком (нельзя забыть)
+- `IsLearned` – изучен ли навык
+- `CanBeLearned` – можно ли изучить сейчас
+- `CanBeForgotten` – можно ли забыть сейчас
 
-Views subscribe to `SkillViewModel` changes via ReactiveProperties/ReactiveCommands for automatic UI updates.
+Представления подписываются на изменения `SkillViewModel` через ReactiveProperties/ReactiveCommands, чтобы обновлять UI автоматически
+
+---
+
+## Алгоритм поиска точек сочленения
+
+Сервис использует **алгоритм Тарьяна** для поиска точек сочленения в графе:
+
+- Выполняет **поиск в глубину (DFS — Depth-First Search)** начиная с базового навыка
+- Основан на проверенных принципах **computer science**
+- Отслеживает **время обнаружения** (`disc`) и **минимальные значения** (`low`), чтобы определить **критические навыки**, те узлы, которые держат граф связанным
+- Навыки, удаление которых разрывает связь других изученных с базовым запрещено забывать
+
+Алгоритм работает эффективно — **O(V + E)**, что является оптимальной сложностью для поиска точек сочленения
 
 ---
 
-## Articulation Points Algorithm
+## Эффективность
 
-The service uses **Tarjan's algorithm** for finding articulation points:
-
-- Uses **Depth-First Search (DFS)** starting from the base skill
-- Based on proven computer science principles
-- Tracks discovery times (`disc`) and low-link values (`low`) to detect critical skills
-- Skills whose removal would disconnect the graph from the base cannot be forgotten
-- Maintains connectivity ensuring all remaining skills stay linked to the base
-
-The algorithm efficiently (O(V+E)) identifies articulation points in the learned skill graph.
+- **Сложность O(V + E)** – оптимальная для обхода графа
+- Выполняется за миллисекунды даже для больших графов навыков
+- Запускается только при изменении структуры графа
+- Обновляет только затронутые view models, минимизируя лишние изменения
+- Реактивная архитектура исключает ненужные перерисовки UI
 
 ---
-## Performance Efficiency
-- **O(V + E)** complexity - fastest possible for graph traversal
-- Executes in milliseconds even for large skill trees
-- Only runs when skill tree structure changes
-- View model updates are optimized to only affect changed skills
-- Reactive architecture minimizes unnecessary UI updates
 
----
-## How the Service Works
+## Как работает сервис
 
-### 1. Initialization
-- Sets up reactive subscriptions to score changes and user actions
-- Initializes all skill view models with their initial status
+### 1 Инициализация
+- Настраивает реактивные подписки на изменения очков и действия игрока
+- Инициализирует все view models начальными состояниями
 
-### 2. Skill Selection
-- Updates the selected skill's status via the view model
-- Recalculates articulation points to ensure UI reflects current state
+### 2 Выбор навыка
+- Обновляет состояние выбранного навыка через view model
+- Пересчитывает точки сочленения для текущего состояния графа
 
-### 3. Learning a Skill
-- Checks prerequisites: sufficient points and adjacent learned skill
-- Marks skill as learned and updates view model
-- Recalculates articulation points for the modified graph
+### 3 Изучение навыка
+- Проверяет условия: достаточно ли очков и есть ли соседний изученный навык
+- Помечает навык как изученный и обновляет view model
+- Пересчитывает точки сочленения
 
-### 4. Forgetting a Skill
-- Checks if skill is not base and not an articulation point
-- Marks skill as forgotten and updates view model
-- Returns skill points and recalculates articulation points
+### 4 Забытие навыка
+- Проверяет, что навык не является базовым и не является критическим `(articulation point)`
+- Помечает навык как забытый, обновляет view model
+- Возвращает очки и пересчитывает точки сочленения
 
-### 5. Forgetting All Skills
-- Iteratively removes all forgettable skills while maintaining connectivity
-- Processes skills in optimal order to maximize forgettable skills
-- Updates each skill status via view model contract
-- Recalculates articulation points after each change
+### 5 Забытие всех навыков
+- Итеративно удаляет все допустимые навыки с сохранением связности
+- Обрабатывает их в порядке, позволяющем забыть все возможные
+- Обновляет статус каждого навыка через view model
+- Пересчитывает точки сочленения после каждого шага  
