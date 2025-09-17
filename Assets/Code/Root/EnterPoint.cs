@@ -9,9 +9,9 @@ namespace Root
 {
     public class EnterPoint : MonoBehaviour
     {
-        [SerializeField] private SkillView[] _skillViews;
         [SerializeField] private SkillSetConfig _skillsConfig;
         [SerializeField] private HUDWindow _hudWindow;
+        [SerializeField] private SkillView[] _skillViews;
         
         private void Start()
         {

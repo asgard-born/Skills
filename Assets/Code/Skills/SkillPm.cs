@@ -6,30 +6,38 @@ namespace Skills
 {
     public class SkillPm : BaseDisposable
     {
+        private readonly Ctx _ctx;
+
         public class Ctx
         {
             public SkillConfig Config;
-            
+
             public ReadOnlyReactiveProperty<int> Scores;
-            public ReactiveCommand OnSkillSelected;
+            public ReactiveCommand OnViewSkillSelected;
+            public ReactiveCommand<SkillType> SkillSelectionBus;
             public ReactiveCommand<SkillStatus> UpdateSkillStatus;
         }
-
-        private Ctx _ctx;
 
         public SkillPm(Ctx ctx)
         {
             _ctx = ctx;
 
-            AddUnsafe(_ctx.OnSkillSelected.Subscribe(_ => SendStatus()));
-            SendStatus();
+            AddUnsafe(_ctx.OnViewSkillSelected.Subscribe(_ => OnViewSkillSelected()));
+            SendStatusToView();
         }
 
-        private void SendStatus()
+        private void OnViewSkillSelected()
+        {
+            _ctx.SkillSelectionBus?.Execute(_ctx.Config.Type);
+            SendStatusToView();
+        }
+
+        private void SendStatusToView()
         {
             var status = new SkillStatus
             {
-                CanBeForgotten = _ctx.Config.IsLearned,
+                IsLearned = _ctx.Config.IsLearned,
+                CanBeForgotten = _ctx.Config.IsLearned && !_ctx.Config.IsBase,
                 CanBeLearned = !_ctx.Config.IsLearned && _ctx.Config.Cost <= _ctx.Scores.Value
             };
 

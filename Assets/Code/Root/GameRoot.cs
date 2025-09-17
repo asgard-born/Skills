@@ -65,7 +65,10 @@ namespace Root
             AddUnsafe(new UIRoot(new UIRoot.Ctx
             {
                 HUDWindow = _ctx.HUDWindow,
-                OnEarnScoresClick = _onEarnScoresClick
+                
+                Scores = _scores.ToReadOnlyReactiveProperty(),
+                OnEarnScoresClick = _onEarnScoresClick,
+                OnForgetAllClick = _onForgetAllClick
             }));
         }
     }
