@@ -20,26 +20,24 @@ namespace Skills
         private Ctx _ctx;
         private bool _isBase;
         private bool _isSelected;
-        private bool _isLearned;
 
         public SkillType SkillType => _skillType;
 
         public class Ctx
         {
             public SkillConfig Config;
-            public ReactiveCommand OnViewSkillSelected;
+            public ReactiveCommand<SkillType> OnViewSkillSelected;
             public ReactiveCommand<SkillType> UnselectSkill;
             public ReactiveCommand<SkillType> OnLearnSkillClicked;
-            public ReactiveCommand<SkillStatus> UpdateSkillStatus;
-            public ReactiveCommand<(SkillType, int)> OnSkillLearned;
-            public ReactiveCommand<(SkillType, int)> OnSkillForgotten;
+            public ReactiveCommand<SkillStatus> UpdateStatus;
+            public ReactiveCommand<SkillType> OnSkillForgetClicked;
         }
 
         public void Initialize(Ctx ctx)
         {
             _ctx = ctx;
             _isBase = ctx.Config.IsBase;
-            _ctx.UpdateSkillStatus.Subscribe(UpdateStatus).AddTo(this);
+            _ctx.UpdateStatus.Subscribe(UpdateStatus).AddTo(this);
             _ctx.UnselectSkill.Subscribe(SetUnselectedState).AddTo(this);
 
             _skillButton.onClick.AddListener(SetSelectedState);
@@ -62,7 +60,7 @@ namespace Skills
             }
 
             _selectedImage.gameObject.SetActive(true);
-            _ctx.OnViewSkillSelected?.Execute();
+            _ctx.OnViewSkillSelected?.Execute(_skillType);
         }
 
         private void SetUnselectedState(SkillType skillType)
@@ -83,28 +81,30 @@ namespace Skills
 
         private void OnLearnButtonClick()
         {
+            _ctx.OnLearnSkillClicked?.Execute(_skillType);
         }
 
         private void OnForgetButtonClick()
         {
+            _ctx.OnSkillForgetClicked?.Execute(_skillType);
         }
 
-        private void UpdateStatus(SkillStatus status)
+        private void UpdateStatus(SkillStatus viewStatus)
         {
             _costText.text = $"Изучить: {_ctx.Config.Cost.ToString()}";
 
             if (_isSelected)
             {
-                _learnBtn.gameObject.SetActive(status.CanBeLearned);
+                _learnBtn.gameObject.SetActive(viewStatus.CanBeLearned);
 
                 if (!_isBase)
                 {
-                    _forgetBtn.gameObject.SetActive(status.CanBeForgotten);
+                    _forgetBtn.gameObject.SetActive(viewStatus.CanBeForgotten);
                 }
             }
 
             Color color = _mainImage.color;
-            color.a = status.IsLearned ? 1 : .5f;
+            color.a = viewStatus.IsLearned ? 1 : .5f;
             _mainImage.color = color;
         }
 

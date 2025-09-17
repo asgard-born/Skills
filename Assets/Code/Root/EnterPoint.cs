@@ -4,12 +4,13 @@ using UI;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Serialization;
 
 namespace Root
 {
     public class EnterPoint : MonoBehaviour
     {
-        [SerializeField] private SkillSetConfig _skillsConfig;
+        [SerializeField] private SkillsConfigs _skillsConfig;
         [SerializeField] private HUDWindow _hudWindow;
         [SerializeField] private SkillView[] _skillViews;
         

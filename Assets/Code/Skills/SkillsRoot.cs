@@ -11,19 +11,20 @@ namespace Skills
     {
         private readonly Ctx _ctx;
 
-        private readonly List<SkillPm> _models = new();
+        private readonly List<SkillViewModel> _models = new();
 
-        private ReactiveCommand<SkillType> _skillSelectionBus;
-        private ReactiveCommand<SkillType> _unselectSkill;
-        private ReactiveCommand<SkillStatus> _updateSkillStatus;
+        private ReactiveCommand<SkillType> _onSkillSelected;
         private ReactiveCommand<SkillType> _onLearnSkillClicked;
+        private ReactiveCommand<SkillType> _unselectSkill;
 
         public class Ctx
         {
             public SkillView[] SkillViews;
-            public SkillSetConfig SkillsSetConfig;
+            public SkillsConfigs SkillsConfigs;
 
             public ReadOnlyReactiveProperty<int> Scores;
+            public ReactiveCommand<(SkillType, int)> OnSkillLearned;
+            public ReactiveCommand<(SkillType, int)> OnSkillForgotten;
         }
 
         public SkillsRoot(Ctx ctx)
@@ -37,15 +38,14 @@ namespace Skills
 
         private void InitializeRx()
         {
-            AddUnsafe(_skillSelectionBus = new ReactiveCommand<SkillType>());
-            AddUnsafe(_unselectSkill = new ReactiveCommand<SkillType>());
-            AddUnsafe(_updateSkillStatus = new ReactiveCommand<SkillStatus>());
+            AddUnsafe(_onSkillSelected = new ReactiveCommand<SkillType>());
             AddUnsafe(_onLearnSkillClicked = new ReactiveCommand<SkillType>());
+            AddUnsafe(_unselectSkill = new ReactiveCommand<SkillType>());
         }
 
         private void InitializeSkills()
         {
-            foreach (SkillConfig config in _ctx.SkillsSetConfig.SkillConfigs)
+            foreach (SkillConfig config in _ctx.SkillsConfigs.Configs)
             {
                 SkillView view = _ctx.SkillViews.FirstOrDefault(s => s.SkillType == config.Type);
 
@@ -55,44 +55,29 @@ namespace Skills
                     continue;
                 }
 
-                ReactiveCommand onViewSkillSelected;
-                ReactiveCommand<SkillType> onLearnSkillClicked;
-                ReactiveCommand<SkillStatus> updateSkillStatus;
-                ReactiveCommand<(SkillType, int)> onSkillLearned;
-                ReactiveCommand<(SkillType, int)> onSkillForgotten;
-
-                AddUnsafe(onViewSkillSelected = new ReactiveCommand());
-                AddUnsafe(onLearnSkillClicked = new ReactiveCommand<SkillType>());
-                AddUnsafe(updateSkillStatus = new ReactiveCommand<SkillStatus>());
-                AddUnsafe(onSkillLearned = new ReactiveCommand<(SkillType, int)>());
-                AddUnsafe(onSkillForgotten = new ReactiveCommand<(SkillType, int)>());
+                ReactiveCommand<SkillStatus> updateViewStatus;
+                AddUnsafe(updateViewStatus = new ReactiveCommand<SkillStatus>());
 
                 view.Initialize(new SkillView.Ctx
                 {
                     Config = config,
-                    OnViewSkillSelected = onViewSkillSelected,
-                    UpdateSkillStatus = updateSkillStatus,
+                    OnViewSkillSelected = _onSkillSelected,
+                    UpdateStatus = updateViewStatus,
                     UnselectSkill = _unselectSkill,
-                    OnLearnSkillClicked = onLearnSkillClicked,
-                    OnSkillLearned = onSkillLearned,
-                    OnSkillForgotten = onSkillForgotten,
+                    OnLearnSkillClicked = _onLearnSkillClicked,
                 });
 
-                SkillPm model = new SkillPm(new SkillPm.Ctx
+                SkillViewModel viewModel = new SkillViewModel(new SkillViewModel.Ctx
                 {
                     Config = config,
-
-                    Scores = _ctx.Scores,
-                    OnViewSkillSelected = onViewSkillSelected,
-                    UpdateSkillStatus = updateSkillStatus,
-                    SkillSelectionBus = _skillSelectionBus,
-                    // OnSkillLearned = onSkillLearned,
-                    // OnSkillForgotten = onSkillForgotten,
+                    SkillSelectionGlobal = _onSkillSelected,
+                    OnSkillLearned = _ctx.OnSkillLearned,
+                    OnSkillForgotten = _ctx.OnSkillForgotten,
                 });
 
-                AddUnsafe(model);
+                AddUnsafe(viewModel);
 
-                _models.Add(model);
+                _models.Add(viewModel);
             }
         }
 
@@ -100,11 +85,10 @@ namespace Skills
         {
             AddUnsafe(new SkillsService(new SkillsService.Ctx
             {
-                Skills = _models,
-                SkillSelectionBus = _skillSelectionBus,
+                Models = _models,
+                OnSkillSelected = _onSkillSelected,
                 UnselectSkill = _unselectSkill,
                 OnLearnSkillClicked = _onLearnSkillClicked,
-                UpdateSkillStatus = _updateSkillStatus
             }));
         }
     }
