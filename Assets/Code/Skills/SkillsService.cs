@@ -33,7 +33,7 @@ namespace Skills
             AddUnsafe(_ctx.Scores.Subscribe(_ => OnScoreChanged()));
             AddUnsafe(_ctx.OnSkillSelected.Subscribe(OnSkillSelected));
             AddUnsafe(_ctx.OnLearnSkillClicked.Subscribe(OnLearnSkillClicked));
-            AddUnsafe(_ctx.OnForgetSkillClicked.Subscribe(ForgetSkill));
+            AddUnsafe(_ctx.OnForgetSkillClicked.Subscribe(OnForgetSkillClicked));
             AddUnsafe(_ctx.OnForgetAllSkillsClicked.Subscribe(_ => ForgetAllSkills()));
 
             RecalculateArticulationPoints();
@@ -73,7 +73,7 @@ namespace Skills
         private void OnSkillSelected(SkillType skillType)
         {
             if (skillType == _lastSelectedSkill) return;
-            
+
             _ctx.UnselectSkill?.Execute(_lastSelectedSkill);
             _lastSelectedSkill = skillType;
 
@@ -106,7 +106,7 @@ namespace Skills
             });
         }
 
-        private void ForgetSkill(SkillType type)
+        private void OnForgetSkillClicked(SkillType type)
         {
             SkillViewModel model = GetModel(type);
             if (model == null || !CanBeForgotten(model)) return;
@@ -115,10 +115,12 @@ namespace Skills
 
             RecalculateArticulationPoints();
 
+            model.IsLearned = false;
+
             model.UpdateStatus(new SkillStatus
             {
                 Type = model.Type,
-                IsLearned = false,
+                IsLearned = model.IsLearned,
                 CanBeLearned = CanBeLearned(model),
                 CanBeForgotten = false
             });

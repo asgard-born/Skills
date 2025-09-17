@@ -12,7 +12,7 @@ namespace Skills
         public SkillType[] Neighbors { get; }
         public int Cost { get; }
         public bool IsBase { get; }
-        public bool IsLearned { get; private set; }
+        public bool IsLearned { get; set; }
         public bool CanBeLearned { get; private set; }
         public bool CanBeForgotten { get; private set; }
 
