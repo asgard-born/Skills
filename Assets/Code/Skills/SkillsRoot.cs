@@ -16,7 +16,6 @@ namespace Skills
         private ReactiveCommand<SkillType> _onSkillSelected;
         private ReactiveCommand<SkillType> _onLearnSkillClicked;
         private ReactiveCommand<SkillType> _onForgetSkillClicked;
-        private ReactiveCommand<SkillType> _unselectSkill;
 
         public class Ctx
         {
@@ -43,7 +42,6 @@ namespace Skills
             AddUnsafe(_onSkillSelected = new ReactiveCommand<SkillType>());
             AddUnsafe(_onLearnSkillClicked = new ReactiveCommand<SkillType>());
             AddUnsafe(_onForgetSkillClicked = new ReactiveCommand<SkillType>());
-            AddUnsafe(_unselectSkill = new ReactiveCommand<SkillType>());
         }
 
         private void InitializeSkills()
@@ -66,7 +64,6 @@ namespace Skills
                     Config = config,
                     OnViewSkillSelected = _onSkillSelected,
                     UpdateStatus = updateViewStatus,
-                    UnselectSkill = _unselectSkill,
                     OnLearnSkillClicked = _onLearnSkillClicked,
                     OnForgetSkillClicked = _onForgetSkillClicked
                 });
@@ -91,7 +88,6 @@ namespace Skills
 
                 Scores = _ctx.Scores,
                 OnSkillSelected = _onSkillSelected,
-                UnselectSkill = _unselectSkill,
                 OnLearnSkillClicked = _onLearnSkillClicked,
                 OnForgetSkillClicked = _onForgetSkillClicked,
                 OnSkillLearned = _ctx.OnSkillLearned,

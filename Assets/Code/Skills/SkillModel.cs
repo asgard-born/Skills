@@ -13,6 +13,7 @@ namespace Skills
         public int Cost { get; }
         public bool IsBase { get; }
         public bool IsLearned { get; set; }
+        public bool IsSelected { get; private set; }
         public bool CanBeLearned { get; private set; }
         public bool CanBeForgotten { get; private set; }
 
@@ -41,6 +42,7 @@ namespace Skills
             }
 
             IsLearned = status.IsLearned;
+            IsSelected = status.IsSelected;
             CanBeLearned = status.CanBeLearned;
             CanBeForgotten = status.CanBeForgotten;
 

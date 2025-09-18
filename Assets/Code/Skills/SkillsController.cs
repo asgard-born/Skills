@@ -7,7 +7,7 @@ namespace Skills
 {
     public class SkillsController : BaseDisposable
     {
-        private SkillType _lastSelectedSkill;
+        private SkillType _lastSelectedSkill = SkillType.None;
         private readonly Ctx _ctx;
 
         private readonly HashSet<SkillType> _articulationPointsCache = new();
@@ -18,7 +18,6 @@ namespace Skills
 
             public ReadOnlyReactiveProperty<int> Scores;
             public ReactiveCommand<SkillType> OnSkillSelected;
-            public ReactiveCommand<SkillType> UnselectSkill;
             public ReactiveCommand<SkillType> OnLearnSkillClicked;
             public ReactiveCommand<SkillType> OnForgetSkillClicked;
             public ReactiveCommand<(SkillType, int)> OnSkillLearned;
@@ -48,6 +47,7 @@ namespace Skills
                 {
                     Type = model.Type,
                     IsLearned = model.IsLearned,
+                    IsSelected = model.IsSelected,
                     CanBeLearned = CanBeLearned(model),
                     CanBeForgotten = CanBeForgotten(model)
                 });
@@ -64,6 +64,7 @@ namespace Skills
                 {
                     Type = selectedModel.Type,
                     IsLearned = selectedModel.IsLearned,
+                    IsSelected = true,
                     CanBeLearned = CanBeLearned(selectedModel),
                     CanBeForgotten = selectedModel.CanBeForgotten
                 });
@@ -74,7 +75,20 @@ namespace Skills
         {
             if (skillType == _lastSelectedSkill) return;
 
-            _ctx.UnselectSkill?.Execute(_lastSelectedSkill);
+            if (_lastSelectedSkill != SkillType.None)
+            {
+                SkillModel lastSelected = GetModel(_lastSelectedSkill);
+
+                lastSelected.UpdateStatus(new SkillStatus
+                {
+                    Type = lastSelected.Type,
+                    IsLearned = lastSelected.IsLearned,
+                    IsSelected = false,
+                    CanBeLearned = lastSelected.CanBeLearned,
+                    CanBeForgotten = lastSelected.CanBeForgotten
+                });
+            }
+
             _lastSelectedSkill = skillType;
 
             SkillModel model = GetModel(skillType);
@@ -83,6 +97,7 @@ namespace Skills
             {
                 Type = model.Type,
                 IsLearned = model.IsLearned,
+                IsSelected = true,
                 CanBeLearned = CanBeLearned(model),
                 CanBeForgotten = CanBeForgotten(model)
             });
@@ -99,10 +114,11 @@ namespace Skills
             {
                 Type = model.Type,
                 IsLearned = true,
+                IsSelected = model.IsSelected,
                 CanBeLearned = false,
                 CanBeForgotten = !model.IsBase
             });
-            
+
             RecalculateArticulationPoints();
         }
 
@@ -119,10 +135,11 @@ namespace Skills
             {
                 Type = model.Type,
                 IsLearned = model.IsLearned,
+                IsSelected = model.IsSelected,
                 CanBeLearned = CanBeLearned(model),
                 CanBeForgotten = false
             });
-            
+
             RecalculateArticulationPoints();
         }
 
@@ -222,6 +239,7 @@ namespace Skills
                     {
                         Type = model.Type,
                         IsLearned = false,
+                        IsSelected = model.IsSelected,
                         CanBeLearned = CanBeLearned(model),
                         CanBeForgotten = false
                     };
