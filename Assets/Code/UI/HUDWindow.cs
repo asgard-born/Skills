@@ -9,6 +9,7 @@ namespace UI
     {
         [SerializeField] private TextMeshProUGUI _scoresValue;
         [SerializeField] private Button _earnButton;
+        [SerializeField] private TextMeshProUGUI _earnText;
         [SerializeField] private Button _forgetAllButton;
         [SerializeField] private int _scoresPerClick = 100;
 
@@ -26,6 +27,7 @@ namespace UI
             _ctx = ctx;
 
             _ctx.Scores.Subscribe(UpdateScores);
+            _earnText.text  = $"Заработать: {_scoresPerClick.ToString()}";
         }
 
         private void Awake()

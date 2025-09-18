@@ -363,12 +363,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36.5
+  m_fontSize: 32
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 36.5
+  m_fontSizeMax: 32
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -443,7 +443,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 36, y: 79.280396}
-  m_SizeDelta: {x: 253.9851, y: 63.4392}
+  m_SizeDelta: {x: 323.5447, y: 69.9471}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &1944245658
 CanvasRenderer:
@@ -565,7 +565,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -45.513245, y: 79.280396}
-  m_SizeDelta: {x: 256.9735, y: 63.43921}
+  m_SizeDelta: {x: 256.9735, y: 69.9471}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &1951264232
 CanvasRenderer:
@@ -848,5 +848,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scoresValue: {fileID: 907110794}
   _earnButton: {fileID: 1944245656}
+  _earnText: {fileID: 1071223343}
   _forgetAllButton: {fileID: 1951264230}
   _scoresPerClick: 100
