@@ -17,7 +17,7 @@ namespace Skills
             public List<SkillModel> Models;
 
             public ReadOnlyReactiveProperty<int> Scores;
-            public ReactiveCommand<SkillType> OnSkillSelected;
+            public ReactiveCommand<SkillType> OnViewSelectClick;
             public ReactiveCommand<SkillType> OnLearnSkillClicked;
             public ReactiveCommand<SkillType> OnForgetSkillClicked;
             public ReactiveCommand<(SkillType, int)> OnSkillLearned;
@@ -30,7 +30,7 @@ namespace Skills
             _ctx = ctx;
 
             AddUnsafe(_ctx.Scores.Subscribe(_ => OnScoreChanged()));
-            AddUnsafe(_ctx.OnSkillSelected.Subscribe(OnSkillSelected));
+            AddUnsafe(_ctx.OnViewSelectClick.Subscribe(OnViewSelectClick));
             AddUnsafe(_ctx.OnLearnSkillClicked.Subscribe(OnLearnSkillClicked));
             AddUnsafe(_ctx.OnForgetSkillClicked.Subscribe(OnForgetSkillClicked));
             AddUnsafe(_ctx.OnForgetAllSkillsClicked.Subscribe(_ => ForgetAllSkills()));
@@ -71,7 +71,7 @@ namespace Skills
             }
         }
 
-        private void OnSkillSelected(SkillType skillType)
+        private void OnViewSelectClick(SkillType skillType)
         {
             if (skillType == _lastSelectedSkill) return;
 

@@ -27,7 +27,7 @@ namespace Skills
         public class Ctx
         {
             public SkillConfig Config;
-            public ReactiveCommand<SkillType> OnViewSkillSelected;
+            public ReactiveCommand<SkillType> OnViewSelectClick;
             public ReactiveCommand<SkillType> OnLearnSkillClicked;
             public ReactiveCommand<SkillStatus> UpdateStatus;
             public ReactiveCommand<SkillType> OnForgetSkillClicked;
@@ -51,7 +51,7 @@ namespace Skills
 
         private void OnSelectClick()
         {
-            _ctx.OnViewSkillSelected?.Execute(_skillType);
+            _ctx.OnViewSelectClick?.Execute(_skillType);
         }
 
         private void OnLearnButtonClick()

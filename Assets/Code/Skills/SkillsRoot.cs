@@ -13,7 +13,7 @@ namespace Skills
 
         private readonly List<SkillModel> _models = new();
 
-        private ReactiveCommand<SkillType> _onSkillSelected;
+        private ReactiveCommand<SkillType> _onViewSelectClick;
         private ReactiveCommand<SkillType> _onLearnSkillClicked;
         private ReactiveCommand<SkillType> _onForgetSkillClicked;
 
@@ -39,7 +39,7 @@ namespace Skills
 
         private void InitializeRx()
         {
-            AddUnsafe(_onSkillSelected = new ReactiveCommand<SkillType>());
+            AddUnsafe(_onViewSelectClick = new ReactiveCommand<SkillType>());
             AddUnsafe(_onLearnSkillClicked = new ReactiveCommand<SkillType>());
             AddUnsafe(_onForgetSkillClicked = new ReactiveCommand<SkillType>());
         }
@@ -62,7 +62,7 @@ namespace Skills
                 view.Initialize(new SkillView.Ctx
                 {
                     Config = config,
-                    OnViewSkillSelected = _onSkillSelected,
+                    OnViewSelectClick = _onViewSelectClick,
                     UpdateStatus = updateViewStatus,
                     OnLearnSkillClicked = _onLearnSkillClicked,
                     OnForgetSkillClicked = _onForgetSkillClicked
@@ -75,7 +75,6 @@ namespace Skills
                 });
 
                 AddUnsafe(model);
-
                 _models.Add(model);
             }
         }
@@ -87,7 +86,7 @@ namespace Skills
                 Models = _models,
 
                 Scores = _ctx.Scores,
-                OnSkillSelected = _onSkillSelected,
+                OnViewSelectClick = _onViewSelectClick,
                 OnLearnSkillClicked = _onLearnSkillClicked,
                 OnForgetSkillClicked = _onForgetSkillClicked,
                 OnSkillLearned = _ctx.OnSkillLearned,
